@@ -1,0 +1,61 @@
+-- MDXファイルタイプの認識
+vim.filetype.add({
+	extension = {
+		mdx = "mdx",
+	},
+})
+
+-- 使っていない言語プロバイダを無効化
+-- （:checkhealth の WARNING を消し、起動時の探索も省略される）
+vim.g.loaded_node_provider = 0
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_ruby_provider = 0
+
+-- LSPログの肥大化防止（過去に 350MB 超まで膨れて起動が遅くなったため）
+vim.lsp.log.set_level(vim.log.levels.WARN)
+
+-- 行番号を表示
+vim.opt.number = true
+vim.opt.relativenumber = true -- 相対行番号（ジャンプしやすくなる）
+
+-- クリップボードをOSと共有 (Ctrl+C / Ctrl+V と連携)
+vim.opt.clipboard = "unnamedplus"
+
+-- インデント設定 (スペース2個分)
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.expandtab = true -- タブをスペースに変換
+vim.opt.autoindent = true
+
+-- 検索設定
+vim.opt.ignorecase = true -- 大文字小文字を区別しない
+vim.opt.smartcase = true -- 大文字が入っているときだけ区別する
+
+-- マウス有効化
+vim.opt.mouse = "a"
+
+-- 色の設定（フルカラー対応）
+vim.opt.termguicolors = true
+
+-- (以前は tmux 環境で vim.opt.t_ut = "" にしていたが、
+--  Neovim では t_XX は基本的に無効なので削除)
+
+--縦横ラインの表示
+vim.opt.cursorline = true
+vim.opt.cursorcolumn = true
+
+--エラーのアイコンを定義
+local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+for type, icon in pairs(signs) do
+	local hl = "DiagnosticSign" .. type
+	vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+end
+
+-- 診断表示の設定
+vim.diagnostic.config({
+	virtual_text = true, -- 仮想テキストを表示
+	signs = true, -- サインを表示
+	underline = true, -- 下線を表示
+	update_in_insert = false, -- 挿入モードでの更新を無効化
+	severity_sort = true, -- 深刻度でソート
+})
